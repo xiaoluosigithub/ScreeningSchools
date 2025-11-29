@@ -12,7 +12,7 @@ app.get("/", (req, res) => {
 
 app.get("/schools", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM clean_schools");
+    const [rows] = await db.query("SELECT * FROM schools");
     res.json(rows);
   } catch (err) {
     console.error(err);
@@ -24,7 +24,7 @@ app.get("/schools/province/:province", async (req, res) => {
   try {
     const province = req.params.province;
     const [rows] = await db.query(
-      "SELECT * FROM clean_schools WHERE province = ?",
+      "SELECT * FROM schools WHERE province = ?",
       [province]
     );
     res.json(rows);
@@ -37,7 +37,7 @@ app.get("/schools/city/:city", async (req, res) => {
   try {
     const city = req.params.city;
     const [rows] = await db.query(
-      "SELECT * FROM clean_schools WHERE city = ?",
+      "SELECT * FROM schools WHERE city = ?", 
       [city]
     );
     res.json(rows);
@@ -50,7 +50,7 @@ app.get("/schools/search/:keyword", async (req, res) => {
   try {
     const kw = `%${req.params.keyword}%`;
     const [rows] = await db.query(
-      `SELECT * FROM clean_schools 
+      `SELECT * FROM schools  
        WHERE school_name LIKE ? 
           OR city LIKE ? 
           OR province LIKE ?`,
@@ -67,7 +67,7 @@ app.get("/schools/stats/province", async (req, res) => {
     const level = (req.query.level || "total").toString().toLowerCase();
     const where = level === "bachelor" ? "WHERE education_level LIKE '%本科%'" : "";
     const [rows] = await db.query(
-      `SELECT province AS name, COUNT(*) AS value FROM clean_schools ${where} GROUP BY province`
+      `SELECT province AS name, COUNT(*) AS value FROM schools ${where} GROUP BY province`
     );
     res.json(rows);
   } catch (err) {
@@ -81,7 +81,7 @@ app.get("/schools/stats/city/:province", async (req, res) => {
     const province = req.params.province;
     const whereLevel = level === "bachelor" ? "AND education_level LIKE '%本科%'" : "";
     const [rows] = await db.query(
-      `SELECT city AS name, COUNT(*) AS value FROM clean_schools WHERE province = ? ${whereLevel} GROUP BY city`,
+      `SELECT city AS name, COUNT(*) AS value FROM schools WHERE province = ? ${whereLevel} GROUP BY city`,
       [province]
     );
     res.json(rows);

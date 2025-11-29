@@ -25,4 +25,5 @@ Thumbs.db
 .vercel/
 
 # Project specific
-data/
+data/*
+!data/school.csv

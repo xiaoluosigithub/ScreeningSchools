@@ -48,6 +48,7 @@ const SchoolList: React.FC<SchoolListProps> = ({ level, province, city, metric =
   const [keyword, setKeyword] = useState<string>(""); // 搜索关键词状态 
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
+  const [pageSizeInput, setPageSizeInput] = useState<string>("10");
   const listRef = useRef<HTMLDivElement | null>(null);
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
   const listKey = useMemo(() => `${level}|${province ?? ''}|${city ?? ''}|${metric}|${keyword.trim()}`, [level, province, city, metric, keyword]);
@@ -119,6 +120,10 @@ const SchoolList: React.FC<SchoolListProps> = ({ level, province, city, metric =
   }, [page, pageSize, listKey]);
 
   useEffect(() => {
+    setPageSizeInput(String(pageSize));
+  }, [pageSize]);
+
+  useEffect(() => {
     const tp = Math.max(1, Math.ceil(total / pageSize));
     if (page > tp) setPage(tp);
   }, [schools, pageSize]);
@@ -133,6 +138,18 @@ const SchoolList: React.FC<SchoolListProps> = ({ level, province, city, metric =
     const next = Math.min(Math.max(1, p), totalPages);
     setPage(next);
     if (listRef.current) listRef.current.scrollTop = 0;
+  }
+
+  function commitPageSize(raw: string) {
+    const v = Number(raw);
+    if (!Number.isFinite(v)) {
+      setPageSizeInput(String(pageSize));
+      return;
+    }
+    const s = Math.min(200, Math.max(5, Math.floor(v)));
+    setPageSize(s);
+    setPageSizeInput(String(s));
+    gotoPage(1);
   }
 
   return (
@@ -163,6 +180,7 @@ const SchoolList: React.FC<SchoolListProps> = ({ level, province, city, metric =
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));
+              setPageSizeInput(e.target.value);
               gotoPage(1);
             }}
             className="px-2 py-1 rounded border border-gray-200 bg-white text-xs"
@@ -171,6 +189,22 @@ const SchoolList: React.FC<SchoolListProps> = ({ level, province, city, metric =
             <option value={20}>每页 20</option>
             <option value={50}>每页 50</option>
           </select>
+          <span className="text-xs text-gray-500">自定义</span>
+          <input
+            type="number"
+            min={5}
+            max={200}
+            step={5}
+            value={pageSizeInput}
+            onChange={(e) => {
+              setPageSizeInput(e.target.value);
+            }}
+            onBlur={() => commitPageSize(pageSizeInput)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") commitPageSize(pageSizeInput);
+            }}
+            className="w-16 px-2 py-1 rounded border border-gray-200 bg-white text-xs"
+          />
           <button
             className="px-2 py-1 rounded bg-gray-100 text-gray-700 text-xs hover:bg-gray-200 disabled:opacity-50"
             onClick={() => gotoPage(1)}
