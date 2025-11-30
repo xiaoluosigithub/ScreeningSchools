@@ -82,6 +82,16 @@
    });
    ```
 
+#### 数据来源
+
+全国高校名单一览表（教育部EXCEL版）来源链接：[全国高等学校名单](http://www.moe.gov.cn/jyb_xxgk/s5743/s5744/202506/t20250627_1195683.html)
+
+   > **地图数据说明**：
+   > 本项目的行政区划 GeoJSON 数据来源于 [阿里云 DataV.GeoAtlas](https://datav.aliyun.com/portal/school/atlas/area_selector)。
+   > - 全国/省份边界数据直接从 DataV 获取。
+   > - 城市边界数据通过动态 API `https://geo.datav.aliyun.com/areas_v3/bound/{adcode}_full.json` 获取。
+
+
 ### 安装与运行
 
 本项目包含前端和后端两个部分，需要分别启动。
