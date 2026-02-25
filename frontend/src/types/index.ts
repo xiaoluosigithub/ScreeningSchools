@@ -33,3 +33,8 @@ export interface SummaryStats {
   total: number;
   bachelor: number;
 }
+
+export interface FavoriteSchool {
+  school: School;
+  favoritedAt: number;
+}
